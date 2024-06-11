@@ -1,21 +1,20 @@
 <?php
-require_once './models/Mesa.php';
+require_once './models/Sector.php';
 require_once './interfaces/IApiUsable.php';
 
-class MesaController extends Mesa implements IApiUsable
+class SectorController extends Sector implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
 
-        $IdSector = $parametros['IdSector'];
-        $capacidad = $parametros['capacidad'];
-        $atendida = $parametros['atendida'];
+        $sector = $parametros['sector'];
 
-        $mesa = new Mesa($IdSector, $capacidad, $atendida);
-        $mesa->crearMesa();
+        // Creamos el sector
+        $sector = new Sector($sector);
+        $sector->crearSector();
 
-        $payload = json_encode(array("mensaje" => "Mesa creada con éxito"));
+        $payload = json_encode(array("mensaje" => "Sector creado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
@@ -24,10 +23,10 @@ class MesaController extends Mesa implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos mesa por ID
+        // Buscamos sector por ID
         $id = $args['id'];
-        $mesa = Mesa::obtenerMesa($id);
-        $payload = json_encode($mesa);
+        $sector = Sector::obtenerSector($id);
+        $payload = json_encode($sector);
 
         $response->getBody()->write($payload);
         return $response
@@ -36,8 +35,8 @@ class MesaController extends Mesa implements IApiUsable
 
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Mesa::obtenerTodas();
-        $payload = json_encode(array("listaMesa" => $lista));
+        $lista = Sector::obtenerTodos();
+        $payload = json_encode(array("listaSector" => $lista));
 
         $response->getBody()->write($payload);
         return $response
@@ -49,13 +48,11 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $id = $parametros['id'];
-        $IdSector = $parametros['IdSector'] ?? null;
-        $capacidad = $parametros['capacidad'] ?? null;
-        $atendida = $parametros['atendida'] ?? null;
+        $sector = $parametros['sector'] ?? null;
 
-        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida);
+        Sector::modificarSector($id, $sector);
 
-        $payload = json_encode(array("mensaje" => "Mesa modificada con éxito"));
+        $payload = json_encode(array("mensaje" => "Sector modificado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
@@ -67,9 +64,9 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $id = $parametros['id'];
-        Mesa::borrarMesa($id);
+        Sector::borrarSector($id);
 
-        $payload = json_encode(array("mensaje" => "Mesa borrada con éxito"));
+        $payload = json_encode(array("mensaje" => "Sector borrado con éxito"));
 
         $response->getBody()->write($payload);
         return $response

@@ -2,11 +2,13 @@
 class Mesa
 {
     public $id;
+    public $IdSector;
     public $capacidad;
     public $atendida;
 
-    public function __construct($capacidad, $atendida)
+    public function __construct($IdSector, $capacidad, $atendida)
     {
+        $this->IdSector = $IdSector;
         $this->capacidad = $capacidad;
         $this->atendida = $atendida;
     }
@@ -14,7 +16,8 @@ class Mesa
     public function crearMesa()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesas (capacidad, atendida) VALUES (:capacidad, :atendida)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO mesas (IdSector, capacidad, atendida) VALUES (:IdSector, :capacidad, :atendida)");
+        $consulta->bindValue(':IdSector', $this->IdSector, PDO::PARAM_INT);
         $consulta->bindValue(':capacidad', $this->capacidad, PDO::PARAM_INT);
         $consulta->bindValue(':atendida', $this->atendida, PDO::PARAM_BOOL);
         $consulta->execute();
@@ -25,7 +28,7 @@ class Mesa
     public static function obtenerTodas()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, capacidad, atendida FROM mesas");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, IdSector, capacidad, atendida FROM mesas");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');
@@ -34,18 +37,23 @@ class Mesa
     public static function obtenerMesa($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, capacidad, atendida FROM mesas WHERE id = :id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, IdSector, capacidad, atendida FROM mesas WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
 
         return $consulta->fetchObject('Mesa');
     }
 
-    public static function modificarMesa($id, $capacidad = null, $atendida = null)
+    public static function modificarMesa($id, $IdSector = null, $capacidad = null, $atendida = null)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $setClause = [];
         $params = [':id' => $id];
+
+        if ($IdSector !== null) {
+            $setClause[] = 'IdSector = :IdSector';
+            $params[':IdSector'] = $IdSector;
+        }
 
         if ($capacidad !== null) {
             $setClause[] = 'capacidad = :capacidad';

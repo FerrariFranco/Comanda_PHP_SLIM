@@ -1,21 +1,20 @@
 <?php
-require_once './models/Mesa.php';
+require_once './models/Rol.php';
 require_once './interfaces/IApiUsable.php';
 
-class MesaController extends Mesa implements IApiUsable
+class RolController extends Rol implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
 
-        $IdSector = $parametros['IdSector'];
-        $capacidad = $parametros['capacidad'];
-        $atendida = $parametros['atendida'];
+        $rol = $parametros['rol'];
 
-        $mesa = new Mesa($IdSector, $capacidad, $atendida);
-        $mesa->crearMesa();
+        // Creamos el rol
+        $rol = new Rol($rol);
+        $rol->crearRol();
 
-        $payload = json_encode(array("mensaje" => "Mesa creada con éxito"));
+        $payload = json_encode(array("mensaje" => "Rol creado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
@@ -24,10 +23,10 @@ class MesaController extends Mesa implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos mesa por ID
+        // Buscamos rol por ID
         $id = $args['id'];
-        $mesa = Mesa::obtenerMesa($id);
-        $payload = json_encode($mesa);
+        $rol = Rol::obtenerRol($id);
+        $payload = json_encode($rol);
 
         $response->getBody()->write($payload);
         return $response
@@ -36,8 +35,8 @@ class MesaController extends Mesa implements IApiUsable
 
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Mesa::obtenerTodas();
-        $payload = json_encode(array("listaMesa" => $lista));
+        $lista = Rol::obtenerTodos();
+        $payload = json_encode(array("listaRol" => $lista));
 
         $response->getBody()->write($payload);
         return $response
@@ -49,13 +48,11 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $id = $parametros['id'];
-        $IdSector = $parametros['IdSector'] ?? null;
-        $capacidad = $parametros['capacidad'] ?? null;
-        $atendida = $parametros['atendida'] ?? null;
+        $rol = $parametros['rol'] ?? null;
 
-        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida);
+        Rol::modificarRol($id, $rol);
 
-        $payload = json_encode(array("mensaje" => "Mesa modificada con éxito"));
+        $payload = json_encode(array("mensaje" => "Rol modificado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
@@ -67,9 +64,9 @@ class MesaController extends Mesa implements IApiUsable
         $parametros = $request->getParsedBody();
 
         $id = $parametros['id'];
-        Mesa::borrarMesa($id);
+        Rol::borrarRol($id);
 
-        $payload = json_encode(array("mensaje" => "Mesa borrada con éxito"));
+        $payload = json_encode(array("mensaje" => "Rol borrado con éxito"));
 
         $response->getBody()->write($payload);
         return $response
