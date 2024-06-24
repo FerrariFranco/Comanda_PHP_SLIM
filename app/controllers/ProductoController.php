@@ -14,7 +14,10 @@ class ProductoController extends Producto implements IApiUsable
         $tipo = $parametros['tipo'];
 
         // Creamos el producto
-        $producto = new Producto($nombre, $precio,$tipo);
+        $producto = new Producto();
+        $producto->nombre = $nombre;
+        $producto->precio = $precio;
+        $producto->tipo = $tipo;
         $producto->crearProducto();
 
         $payload = json_encode(array("mensaje" => "Producto creado con éxito"));
@@ -53,7 +56,7 @@ class ProductoController extends Producto implements IApiUsable
         $id = $parametros['id'];
         $nombre = $parametros['nombre'] ?? null;
         $precio = $parametros['precio'] ?? null;
-        $tipo = $parametros['tipo'] ?? null;
+        $tipo = $parametros['idTipo'] ?? null;
 
         Producto::modificarProducto($id, $nombre, $precio, $tipo);
 

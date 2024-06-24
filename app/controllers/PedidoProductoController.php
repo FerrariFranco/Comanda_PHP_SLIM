@@ -6,6 +6,7 @@ class PedidoProductoController extends PedidoProducto implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
+        echo"asd";
         $parametros = $request->getParsedBody();
         $idPedido = $parametros['idPedido'];
         $idProducto = $parametros['idProducto'];

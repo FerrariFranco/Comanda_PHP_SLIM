@@ -11,8 +11,9 @@ class MesaController extends Mesa implements IApiUsable
         $IdSector = $parametros['IdSector'];
         $capacidad = $parametros['capacidad'];
         $atendida = $parametros['atendida'];
+        $estadoMesa = $parametros['estadoMesa'] ?? 'abierta';
 
-        $mesa = new Mesa($IdSector, $capacidad, $atendida);
+        $mesa = new Mesa($IdSector, $capacidad, $atendida, $estadoMesa);
         $mesa->crearMesa();
 
         $payload = json_encode(array("mensaje" => "Mesa creada con éxito"));
@@ -24,7 +25,6 @@ class MesaController extends Mesa implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos mesa por ID
         $id = $args['id'];
         $mesa = Mesa::obtenerMesa($id);
         $payload = json_encode($mesa);
@@ -52,8 +52,9 @@ class MesaController extends Mesa implements IApiUsable
         $IdSector = $parametros['IdSector'] ?? null;
         $capacidad = $parametros['capacidad'] ?? null;
         $atendida = $parametros['atendida'] ?? null;
+        $estadoMesa = $parametros['estadoMesa'] ?? null;
 
-        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida);
+        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida, $estadoMesa);
 
         $payload = json_encode(array("mensaje" => "Mesa modificada con éxito"));
 
@@ -70,6 +71,30 @@ class MesaController extends Mesa implements IApiUsable
         Mesa::borrarMesa($id);
 
         $payload = json_encode(array("mensaje" => "Mesa borrada con éxito"));
+
+        $response->getBody()->write($payload);
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function CerraMesa($request, $response, $args)
+    {
+        $id = $args['id'];
+        Mesa::cerrarMesa($id);
+
+        $payload = json_encode(array("mensaje" => "Mesa cerrada con éxito"));
+
+        $response->getBody()->write($payload);
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function AbriMesa($request, $response, $args)
+    {
+        $id = $args['id'];
+        Mesa::abrirMesa($id);
+
+        $payload = json_encode(array("mensaje" => "Mesa abierta con éxito"));
 
         $response->getBody()->write($payload);
         return $response

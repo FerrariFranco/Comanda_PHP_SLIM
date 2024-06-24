@@ -24,7 +24,7 @@ class Usuario
         $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO usuarios (usuario, clave, rol, sector, nombre) VALUES (:usuario, :clave, :rol, :sector, :nombre)");
         $claveHash = password_hash($this->clave, PASSWORD_DEFAULT);
         $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
-        $consulta->bindValue(':clave', $claveHash);
+        $consulta->bindValue(':clave', $this->clave);
         $consulta->bindValue(':rol', $idRol, PDO::PARAM_INT);
         $consulta->bindValue(':sector', $idSector, PDO::PARAM_INT);
         $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
@@ -51,47 +51,50 @@ class Usuario
         
         return $consulta->fetchObject('Usuario');
     }
-
     public static function modificarUsuario($id, $usuario = null, $clave = null, $rol = null, $sector = null, $nombre = null)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $setClause = [];
         $params = [':id' => $id];
-        
+    
         if ($usuario !== null) {
             $setClause[] = 'usuario = :usuario';
             $params[':usuario'] = $usuario;
         }
-        
+    
         if ($clave !== null) {
             $setClause[] = 'clave = :clave';
-            $params[':clave'] = password_hash($clave, PASSWORD_DEFAULT);
+            $params[':clave'] = $clave;
         }
-        
+    
         if ($rol !== null) {
             $setClause[] = 'rol = :rol';
             $params[':rol'] = $rol;
         }
-        
+    
         if ($sector !== null) {
             $setClause[] = 'sector = :sector';
             $params[':sector'] = $sector;
         }
-
+    
         if ($nombre !== null) {
             $setClause[] = 'nombre = :nombre';
             $params[':nombre'] = $nombre;
         }
-        
-        $sql = 'UPDATE usuarios SET ' . implode(', ', $setClause) . ' WHERE id = :id';
-        $consulta = $objAccesoDatos->prepararConsulta($sql);
-        
-        foreach ($params as $param => $value) {
-            $consulta->bindValue($param, $value);
+    
+        // Verifica que $id no sea null antes de ejecutar la consulta
+        if ($id !== null) {
+            $sql = 'UPDATE usuarios SET ' . implode(', ', $setClause) . ' WHERE id = :id';
+            $consulta = $objAccesoDatos->prepararConsulta($sql);
+    
+            foreach ($params as $param => $value) {
+                $consulta->bindValue($param, $value);
+            }
+    
+            $consulta->execute();
         }
-        
-        $consulta->execute();
     }
+    
 
     public static function borrarUsuario($usuario)
     {

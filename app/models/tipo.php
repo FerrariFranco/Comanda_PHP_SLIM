@@ -1,22 +1,20 @@
 <?php
+require_once "./db/AccesoDatos.php";
+
 class Tipo
 {
     public $id;
     public $tipo;
     public $idSector;
 
-    public function __construct($tipo, $idSector)
-    {
-        $this->tipo = $tipo;
-        $this->idSector = $idSector;
-    }
+    public function __construct() {}
 
     public function crearTipo()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO tipos (tipo, idSector) VALUES (:tipo, :idSector)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO tipos (tipo, idsector) VALUES (:tipo, :idsector)");
         $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
-        $consulta->bindValue(':idSector', $this->idSector, PDO::PARAM_INT);
+        $consulta->bindValue(':idsector', $this->idSector, PDO::PARAM_INT);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -25,7 +23,7 @@ class Tipo
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, tipo, idSector FROM tipos");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, tipo, idsector FROM tipos");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Tipo');
@@ -34,7 +32,7 @@ class Tipo
     public static function obtenerTipo($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, tipo, idSector FROM tipos WHERE id = :id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, tipo, idsector FROM tipos WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
 

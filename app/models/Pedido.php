@@ -10,9 +10,11 @@ class Pedido
     public $cobrado;
     public $momentoCobrado;
     public $productos;
+    public $momentoPedido;
 
     public function crearPedido()
     {
+        $this->momentoPedido = date('Y-m-d H:i:s');
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (idUsuario, idMesa, precioTotal, cobrado, momentoCobrado) VALUES (:idUsuario, :idMesa, :precioTotal, :cobrado, :momentoCobrado)");
         $consulta->bindValue(':idUsuario', $this->idUsuario, PDO::PARAM_INT);
@@ -20,6 +22,8 @@ class Pedido
         $consulta->bindValue(':precioTotal', $this->precioTotal, PDO::PARAM_STR);
         $consulta->bindValue(':cobrado', $this->cobrado, PDO::PARAM_BOOL);
         $consulta->bindValue(':momentoCobrado', $this->momentoCobrado, PDO::PARAM_STR);
+        $consulta->bindValue(':momentoPedido', $this->momentoPedido, PDO::PARAM_STR);
+
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -86,6 +90,68 @@ class Pedido
     public function cargarProductos()
     {
         $this->productos = PedidoProducto::obtenerProductosPorPedido($this->id);
+    }
+    public static function obtenerPedidosPorUsuario($idUsuario)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, idUsuario, idMesa, precioTotal, cobrado, momentoCobrado FROM pedidos WHERE idUsuario = :idUsuario");
+        $consulta->bindValue(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $consulta->execute();
+
+        $pedidos = $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+        foreach ($pedidos as $pedido) {
+            $pedido->cargarProductos();
+        }
+
+        return $pedidos;
+    }
+
+    private function calcularPrecioTotal()
+    {
+        $productos = PedidoProducto::obtenerProductosPorPedido($this->id);
+        $this->precioTotal = 0;
+
+        foreach ($productos as $productoPedido) {
+            $producto = Producto::obtenerProducto($productoPedido->idProducto);
+            if ($producto) {
+                $this->precioTotal += $producto->precio;
+            }
+        }
+    }
+
+    public static function actualizarPrecioTotal($idPedido, $precioProducto)
+    {
+        $pedido = self::obtenerPedido($idPedido);
+        $nuevoPrecioTotal = $pedido->precioTotal + $precioProducto;
+
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("UPDATE pedidos SET precioTotal = :precioTotal WHERE id = :id");
+        $consulta->bindValue(':id', $idPedido, PDO::PARAM_INT);
+        $consulta->bindValue(':precioTotal', $nuevoPrecioTotal, PDO::PARAM_STR);
+        $consulta->execute();
+    }
+
+    public static function obtenerEstadoPedido($idPedido)
+    {
+        $pedido = self::obtenerPedido($idPedido);
+        if (!$pedido) {
+            return null;
+        }
+
+        $productosEntregados = PedidoProducto::obtenerProductosEntregadosPorPedido($idPedido);
+
+        $estadoPedido = [
+            'idPedido' => $pedido->id,
+            'idUsuario' => $pedido->idUsuario,
+            'idMesa' => $pedido->idMesa,
+            'precioTotal' => $pedido->precioTotal,
+            'cobrado' => $pedido->cobrado,
+            'momentoCobrado' => $pedido->momentoCobrado,
+            'momentoPedido' => $pedido->momentoPedido,
+            'productosEntregados' => $productosEntregados
+        ];
+
+        return $estadoPedido;
     }
 }
 

@@ -1,26 +1,22 @@
 <?php
 require_once './models/Usuario.php';
 require_once './interfaces/IApiUsable.php';
+require_once './models/Pedido.php';
+
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class UsuarioController extends Usuario implements IApiUsable
 {
     public function CargarUno($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
-    
+        $parametros = (array)$request->getParsedBody();
         $usuario = $parametros['usuario'];
         $clave = $parametros['clave'];
         $sector = $parametros['sector']; 
         $rol = $parametros['rol']; 
         $nombre = $parametros['nombre'];
-    
-        $sectoresValidos = ['cocina', 'patio trasero', 'barra', 'candybar']; 
-        $rolesValidos = ['socio', 'cervezero', 'mozo', 'cocinero', 'bartender']; 
-        if (!in_array($sector, $sectoresValidos) || !in_array($rol, $rolesValidos)) {
-            $payload = json_encode(array("mensaje" => "El sector o el rol no son válidos"));
-            return $response->withStatus(400)->getBody()->write($payload);
-        }
-    
+        
         $usr = new Usuario();
         $usr->usuario = $usuario;
         $usr->clave = $clave;
@@ -30,7 +26,7 @@ class UsuarioController extends Usuario implements IApiUsable
     
         $usr->crearUsuario();
     
-        $payload = json_encode(array("mensaje" => "Usuario creado con éxito"));
+        $payload = json_encode(["mensaje" => "Usuario creado con éxito"]);
     
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -50,7 +46,7 @@ class UsuarioController extends Usuario implements IApiUsable
     public function TraerTodos($request, $response, $args)
     {
         $lista = Usuario::obtenerTodos();
-        $payload = json_encode(array("listaUsuario" => $lista));
+        $payload = json_encode(["listaUsuario" => $lista]);
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -60,7 +56,7 @@ class UsuarioController extends Usuario implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $id = $args['id'];
+        $id = $parametros['id'];
         $usuario = $parametros['usuario'] ?? null;
         $clave = $parametros['clave'] ?? null;
         $rol = $parametros['rol'] ?? null;
@@ -69,7 +65,7 @@ class UsuarioController extends Usuario implements IApiUsable
 
         Usuario::modificarUsuario($id, $usuario, $clave, $rol, $sector, $nombre);
 
-        $payload = json_encode(array("mensaje" => "Usuario modificado con éxito"));
+        $payload = json_encode(["mensaje" => "Usuario modificado con éxito"]);
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -80,8 +76,45 @@ class UsuarioController extends Usuario implements IApiUsable
         $id = $args['id'];
         Usuario::borrarUsuario($id);
 
-        $payload = json_encode(array("mensaje" => "Usuario borrado con éxito"));
+        $payload = json_encode(["mensaje" => "Usuario borrado con éxito"]);
 
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function generarToken(Request $request, Response $response): Response
+    {
+        $params = (array)$request->getParsedBody();
+        $usuario = $params['usuario'] ?? '';
+        $clave = $params['clave'] ?? '';
+
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT rol FROM usuarios WHERE usuario = :usuario AND clave = :clave");
+        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+        $consulta->bindValue(':clave', $clave, PDO::PARAM_STR);
+        $consulta->execute();
+        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            $rol = $resultado['rol'];
+            $datos = ['usuario' => $usuario, 'rol' => $rol];
+            $token = AutentificadorJWT::CrearToken($datos);
+            $payload = json_encode(['token' => $token]);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            $response->getBody()->write(json_encode(['mensaje' => 'Credenciales inválidas']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        
+    }
+    public function ObtenerPedidosPorUsuario(Request $request, Response $response, $args): Response
+    {
+        $idUsuario = $args['id'];
+        $pedidos = Pedido::obtenerPedidosPorUsuario($idUsuario);
+
+        $payload = json_encode(["pedidos" => $pedidos]);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }

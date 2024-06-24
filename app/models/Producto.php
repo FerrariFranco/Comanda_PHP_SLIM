@@ -8,20 +8,14 @@ class Producto
     public $precio;
     public $tipo;
 
-    public function __construct($nombre, $precio, $tipo)
-    {
-        $this->nombre = $nombre;
-        $this->precio = $precio;
-        $this->tipo = $tipo;
-    }
 
     public function crearProducto()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productos (nombre, precio, tipo) VALUES (:nombre, :precio, :tipo)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO productos (nombre, precio, idTipo) VALUES (:nombre, :precio, :idTipo)");
         $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
         $consulta->bindValue(':precio', $this->precio, PDO::PARAM_STR);
-        $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
+        $consulta->bindValue(':idTipo', $this->tipo, PDO::PARAM_STR);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -30,7 +24,7 @@ class Producto
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, tipo FROM productos");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, idTipo FROM productos");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
@@ -39,7 +33,7 @@ class Producto
     public static function obtenerProducto($id)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, tipo FROM productos WHERE id = :id");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, nombre, precio, idTipo FROM productos WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
 
@@ -63,8 +57,8 @@ class Producto
         }
 
         if ($tipo !== null) {
-            $setClause[] = 'tipo = :tipo';
-            $params[':tipo'] = $tipo;
+            $setClause[] = 'idTipo = :idTipo';
+            $params[':idTipo'] = $tipo;
         }
 
         $sql = 'UPDATE productos SET ' . implode(', ', $setClause) . ' WHERE id = :id';

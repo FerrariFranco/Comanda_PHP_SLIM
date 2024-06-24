@@ -29,16 +29,16 @@ class PedidoController extends Pedido implements IApiUsable
         $idUsuario = $parametros['idUsuario'];
         $idMesa = $parametros['idMesa'];
         $precioTotal = $parametros['precioTotal'];
-        $cobrado = $parametros['cobrado'];
-        $momentoCobrado = $parametros['momentoCobrado'];
+        //$cobrado = $parametros['cobrado'];
+        //$momentoCobrado = $parametros['momentoCobrado'];
 
         // Crear el pedido
         $pedido = new Pedido();
         $pedido->idUsuario = $idUsuario;
         $pedido->idMesa = $idMesa;
         $pedido->precioTotal = $precioTotal;
-        $pedido->cobrado = $cobrado;
-        $pedido->momentoCobrado = $momentoCobrado;
+        $pedido->cobrado = false;
+        $pedido->momentoCobrado = 0;
         $pedido->crearPedido();
 
         $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
@@ -78,6 +78,7 @@ class PedidoController extends Pedido implements IApiUsable
 
     public function AgregarProducto($request, $response, $args)
     {
+        echo"asd";
         $parametros = $request->getParsedBody();
         $idPedido = $parametros['idPedido'];
         $idProducto = $parametros['idProducto'];
@@ -97,12 +98,27 @@ class PedidoController extends Pedido implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function EntregarPedido($request, $response, $args)
+    public function EntregaPedido($request, $response, $args)
     {
         $idPedido = $args['id'];
         Pedido::entregarPedido($idPedido);
 
         $payload = json_encode(array("mensaje" => "Pedido entregado con éxito"));
+
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function obtenerEstado($request, $response, $args)
+    {
+        $idPedido = $args['idPedido'];
+        $estadoPedido = Pedido::obtenerEstadoPedido($idPedido);
+
+        if ($estadoPedido) {
+            $payload = json_encode($estadoPedido);
+        } else {
+            $payload = json_encode(['mensaje' => 'Pedido no encontrado']);
+        }
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');

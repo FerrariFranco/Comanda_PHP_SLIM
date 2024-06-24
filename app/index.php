@@ -1,12 +1,15 @@
 <?php
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Controllers\CSVController;
+use App\Middlewares\LogMiddleware;
+use App\Middlewares\AuthMiddleware;
+use App\Middlewares\MozoMiddleware;
+use App\Middlewares\VerifyPostFieldsMiddleware;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
-use Slim\Routing\RouteContext;
+
+
 
 require __DIR__ . '/../vendor/autoload.php';
-
 require_once './db/AccesoDatos.php';
 require_once './controllers/UsuarioController.php';
 require_once './controllers/TipoController.php';
@@ -16,18 +19,28 @@ require_once './controllers/ProductoController.php';
 require_once './controllers/PedidoProductoController.php';
 require_once './controllers/PedidoController.php';
 require_once './controllers/MesaController.php';
+require_once './controllers/CSVController.php';
+require_once './middlewares/AuthMiddleware.php';
+require_once './middlewares/LogMiddleware.php';
+require_once './middlewares/MozoMiddleware.php';
+require_once './middlewares/CountBySectorMiddleware.php';
+require_once './middlewares/CountByUserMiddleware.php';
+require_once './middlewares/VerifyPostFieldsMiddleware.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 $app = AppFactory::create();
 
+// $app->add(new LogMiddleware());
+
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
-    $group->post('/', UsuarioController::class . ':CargarUno');
+    $group->post('/', UsuarioController::class . ':CargarUno')->add(new VerifyPostFieldsMiddleware());
     $group->get('/{id}', UsuarioController::class . ':TraerUno');
     $group->get('/', UsuarioController::class . ':TraerTodos');
     $group->put('/', UsuarioController::class . ':ModificarUno');
     $group->delete('/{id}', UsuarioController::class . ':BorrarUno');
+    $group->get('/{id}/pedidos', UsuarioController::class . ':ObtenerPedidosPorUsuario');
 });
 
 $app->group('/tipos', function (RouteCollectorProxy $group) {
@@ -39,11 +52,11 @@ $app->group('/tipos', function (RouteCollectorProxy $group) {
 });
 
 $app->group('/sectores', function (RouteCollectorProxy $group) {
-    $group->post('/', SectorController::class . ':CargarUno');
-    $group->get('/{id}', SectorController::class . ':TraerUno');
-    $group->get('/', SectorController::class . ':TraerTodos');
-    $group->put('/', SectorController::class . ':ModificarUno');
-    $group->delete('/{id}', SectorController::class . ':BorrarUno');
+    $group->post('/', SectorController::class . ':CargarUno')->add(new CountBySectorMiddleware());
+    $group->get('/{id}', SectorController::class . ':TraerUno')->add(new CountBySectorMiddleware());
+    $group->get('/', SectorController::class . ':TraerTodos')->add(new CountBySectorMiddleware());
+    $group->put('/', SectorController::class . ':ModificarUno')->add(new CountBySectorMiddleware());
+    $group->delete('/{id}', SectorController::class . ':BorrarUno')->add(new CountBySectorMiddleware());
 });
 
 $app->group('/roles', function (RouteCollectorProxy $group) {
@@ -78,14 +91,14 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
     $group->post('/agregarProducto', PedidoController::class . ':AgregarProducto');
     $group->put('/entregar/{id}', PedidoController::class . ':EntregarPedido');
     $group->delete('/{id}', PedidoController::class . ':BorrarUno');
-});
+    $group->get('/{id}/estado', PedidoController::class . ':obtenerEstado');
 
-$app->group('/mesas', function (RouteCollectorProxy $group) {
-    $group->post('/', MesaController::class . ':CargarUno');
-    $group->get('/{id}', MesaController::class . ':TraerUno');
-    $group->get('/', MesaController::class . ':TraerTodos');
-    $group->put('/', MesaController::class . ':ModificarUno');
-    $group->delete('/{id}', MesaController::class . ':BorrarUno');
-});
+})->add(new MozoMiddleware())->add(new AuthMiddleware());
+
+$app->post('/login', UsuarioController::class . ':generarToken');
+
+$app->get('/csv', CSVController::class . ':exportCSV');
+
+
 
 $app->run();
