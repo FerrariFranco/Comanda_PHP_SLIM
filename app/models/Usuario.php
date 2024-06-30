@@ -13,20 +13,16 @@ class Usuario
 
     public function crearUsuario()
     {
-        $idRol = $this->obtenerIdRol($this->rol);
-        $idSector = $this->obtenerIdSector($this->sector);
         
-        if ($idRol === null || $idSector === null) {
-            return null;
-        }
+        
 
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO usuarios (usuario, clave, rol, sector, nombre) VALUES (:usuario, :clave, :rol, :sector, :nombre)");
         $claveHash = password_hash($this->clave, PASSWORD_DEFAULT);
         $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
         $consulta->bindValue(':clave', $this->clave);
-        $consulta->bindValue(':rol', $idRol, PDO::PARAM_INT);
-        $consulta->bindValue(':sector', $idSector, PDO::PARAM_INT);
+        $consulta->bindValue(':rol', $this->rol, PDO::PARAM_INT);
+        $consulta->bindValue(':sector', $this->sector, PDO::PARAM_INT);
         $consulta->bindValue(':nombre', $this->nombre, PDO::PARAM_STR);
         $consulta->execute();
         
@@ -51,93 +47,41 @@ class Usuario
         
         return $consulta->fetchObject('Usuario');
     }
-    public static function modificarUsuario($id, $usuario = null, $clave = null, $rol = null, $sector = null, $nombre = null)
+    public static function modificarUsuario($id, $usuario, $clave, $rol, $sector, $nombre)
+{
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $sql = 'UPDATE usuarios SET usuario = :usuario, clave = :clave, rol = :rol, sector = :sector, nombre = :nombre WHERE id = :id';
+    $consulta = $objAccesoDatos->prepararConsulta($sql);
+
+    $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+    $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+    $consulta->bindValue(':clave', $clave, PDO::PARAM_STR);
+    $consulta->bindValue(':rol', $rol, PDO::PARAM_STR);
+    $consulta->bindValue(':sector', $sector, PDO::PARAM_STR);
+    $consulta->bindValue(':nombre', $nombre, PDO::PARAM_STR);
+
+    $consulta->execute();
+}
+
+
+public static function borrarUsuario($id)
+{
+    $objAccesoDato = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET eliminado = 1 WHERE id = :id");
+    $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+    $consulta->execute();
+}
+
+    public static function obtenerUsuarioPorCredenciales($usuario, $clave)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $setClause = [];
-        $params = [':id' => $id];
-    
-        if ($usuario !== null) {
-            $setClause[] = 'usuario = :usuario';
-            $params[':usuario'] = $usuario;
-        }
-    
-        if ($clave !== null) {
-            $setClause[] = 'clave = :clave';
-            $params[':clave'] = $clave;
-        }
-    
-        if ($rol !== null) {
-            $setClause[] = 'rol = :rol';
-            $params[':rol'] = $rol;
-        }
-    
-        if ($sector !== null) {
-            $setClause[] = 'sector = :sector';
-            $params[':sector'] = $sector;
-        }
-    
-        if ($nombre !== null) {
-            $setClause[] = 'nombre = :nombre';
-            $params[':nombre'] = $nombre;
-        }
-    
-        // Verifica que $id no sea null antes de ejecutar la consulta
-        if ($id !== null) {
-            $sql = 'UPDATE usuarios SET ' . implode(', ', $setClause) . ' WHERE id = :id';
-            $consulta = $objAccesoDatos->prepararConsulta($sql);
-    
-            foreach ($params as $param => $value) {
-                $consulta->bindValue($param, $value);
-            }
-    
-            $consulta->execute();
-        }
-    }
-    
-
-    public static function borrarUsuario($usuario)
-    {
-        $objAccesoDato = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDato->prepararConsulta("UPDATE usuarios SET fechaBaja = :fechaBaja WHERE id = :id");
-        $fecha = new DateTime(date("d-m-Y"));
-        $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
-        $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, usuario, clave, rol, sector, nombre, fechaBaja FROM usuarios WHERE usuario = :usuario AND clave = :clave");
+        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+        $consulta->bindValue(':clave', $clave, PDO::PARAM_STR); 
         $consulta->execute();
-    }
-
-    private function obtenerIdRol($nombreRol)
-    {
-        $roles = [
-            'socio' => 1,
-            'cervezero' => 2,
-            'mozo' => 3,
-            'cocinero' => 4,
-            'bartender' => 5
-        ];
-
-        if (array_key_exists($nombreRol, $roles)) {
-            return $roles[$nombreRol]; // Devolver el ID correspondiente
-        } else {
-            return null; // Devolver null si el nombre de rol no se encuentra en el mapeo
-        }
-    }
-
-    private function obtenerIdSector($nombreSector)
-    {
-        $sectores = [
-            'cocina' => 1,
-            'patio trasero' => 2,
-            'barra' => 3,
-            'candybar' => 4
-        ];
         
-        // Verificar si el nombre de sector existe en el mapeo
-        if (array_key_exists($nombreSector, $sectores)) {
-            return $sectores[$nombreSector]; // Devolver el ID correspondiente
-        } else {
-            return null; // Devolver null si el nombre de sector no se encuentra en el mapeo
-        }
+        return $consulta->fetchObject('Usuario');
     }
+
 }
 

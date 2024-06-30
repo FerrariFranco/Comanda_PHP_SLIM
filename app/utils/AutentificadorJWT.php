@@ -1,12 +1,12 @@
 <?php
 
 use Firebase\JWT\JWT;
+require_once "./db/accesodatos.php";
 
 class AutentificadorJWT
 {
-    private static $claveSecreta = $_ENV["CLAVE_JWT"];
+    private static $claveSecreta = "KASSADIN";
     private static $tipoEncriptacion = ['HS256'];
-
     public static function CrearToken($datos)
     {
         $ahora = time();
@@ -17,13 +17,17 @@ class AutentificadorJWT
             'data' => $datos,
             'app' => "Comanda"
         );
-        return JWT::encode($payload, self::$claveSecreta);
+        $token = JWT::encode($payload, self::$claveSecreta);
+        
+        self::GuardarTokenEnDB($datos['usuario'], $datos['rol'], $token, $ahora, $ahora + (60000));
+
+        return $token;
     }
 
     public static function VerificarToken($token)
     {
         if (empty($token)) {
-            throw new Exception("El token esta vacio.");
+            throw new Exception("El token está vacío.");
         }
         try {
             $decodificado = JWT::decode(
@@ -35,15 +39,14 @@ class AutentificadorJWT
             throw $e;
         }
         if ($decodificado->aud !== self::Aud()) {
-            throw new Exception("No es el usuario valido");
+            throw new Exception("No es el usuario válido");
         }
     }
-
 
     public static function ObtenerPayLoad($token)
     {
         if (empty($token)) {
-            throw new Exception("El token esta vacio.");
+            throw new Exception("El token está vacío.");
         }
         return JWT::decode(
             $token,
@@ -77,5 +80,18 @@ class AutentificadorJWT
         $aud .= gethostname();
 
         return sha1($aud);
+    }
+
+    private static function GuardarTokenEnDB($usuario, $rol, $token,$creado_en, $vence_el)
+    {
+        
+        $db = AccesoDatos::obtenerInstancia();
+        $consulta = $db->prepararConsulta("INSERT INTO tokens (usuario, rol, token , creado_en, vence_el) VALUES (:usuario, :rol, :token, :creado_en, :vence_el)");
+        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+        $consulta->bindValue(':rol', $rol, PDO::PARAM_STR);
+        $consulta->bindValue(':creado_en', $creado_en, PDO::PARAM_STR);
+        $consulta->bindValue(':vence_el', $vence_el, PDO::PARAM_STR);
+        $consulta->bindValue(':token', $token, PDO::PARAM_STR); 
+        $consulta->execute();
     }
 }

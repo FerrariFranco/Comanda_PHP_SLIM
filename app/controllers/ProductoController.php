@@ -42,7 +42,7 @@ class ProductoController extends Producto implements IApiUsable
     public function TraerTodos($request, $response, $args)
     {
         $lista = Producto::obtenerTodos();
-        $payload = json_encode(array("listaProducto" => $lista));
+        $payload = json_encode(array($lista));
 
         $response->getBody()->write($payload);
         return $response
@@ -79,5 +79,20 @@ class ProductoController extends Producto implements IApiUsable
         $response->getBody()->write($payload);
         return $response
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function ProductoMasSolicitada($request, $response, $args)
+    {
+        $ProductoMasSolicitada = Producto::obtenerProductoMasSolicitada();
+
+        if ($ProductoMasSolicitada) {
+            $payload = json_encode($ProductoMasSolicitada);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $payload = json_encode(array("mensaje" => "No se encontró ninguna Producto solicitada."));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
     }
 }

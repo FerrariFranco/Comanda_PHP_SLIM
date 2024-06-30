@@ -8,6 +8,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response as SlimResponse;
 use AutentificadorJWT;
 use Exception;
+require_once "./utils/AutentificadorJWT.php";
+
 
 class MozoMiddleware
 {
@@ -18,8 +20,10 @@ class MozoMiddleware
 
         try {
             $datosToken = AutentificadorJWT::ObtenerData($token);
+            echo $datosToken->rol;
+            
 
-            if ($datosToken->rol !== 'mozo') {
+            if ($datosToken->rol != 3) {
                 $response = new SlimResponse();
                 $response->getBody()->write(json_encode([
                     'mensaje' => 'Acceso denegado. Solo los mozos pueden acceder a este recurso.'

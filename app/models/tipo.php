@@ -5,7 +5,7 @@ class Tipo
 {
     public $id;
     public $tipo;
-    public $idSector;
+    public $idsector;
 
     public function __construct() {}
 
@@ -14,7 +14,7 @@ class Tipo
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO tipos (tipo, idsector) VALUES (:tipo, :idsector)");
         $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
-        $consulta->bindValue(':idsector', $this->idSector, PDO::PARAM_INT);
+        $consulta->bindValue(':idsector', $this->idsector, PDO::PARAM_INT);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -39,7 +39,7 @@ class Tipo
         return $consulta->fetchObject('Tipo');
     }
 
-    public static function modificarTipo($id, $tipo = null, $idSector = null)
+    public static function modificarTipo($id, $tipo = null, $idsector = null)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $setClause = [];
@@ -50,9 +50,9 @@ class Tipo
             $params[':tipo'] = $tipo;
         }
 
-        if ($idSector !== null) {
-            $setClause[] = 'idSector = :idSector';
-            $params[':idSector'] = $idSector;
+        if ($idsector !== null) {
+            $setClause[] = 'idsector = :idsector';
+            $params[':idsector'] = $idsector;
         }
 
         $sql = 'UPDATE tipos SET ' . implode(', ', $setClause) . ' WHERE id = :id';
@@ -67,8 +67,8 @@ class Tipo
 
     public static function borrarTipo($id)
     {
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("DELETE FROM tipos WHERE id = :id");
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE tipos SET eliminado = 1 WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
     }

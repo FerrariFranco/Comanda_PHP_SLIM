@@ -8,21 +8,38 @@ class MesaController extends Mesa implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $IdSector = $parametros['IdSector'];
+        $IdSector = $parametros['idSector'];
         $capacidad = $parametros['capacidad'];
-        $atendida = $parametros['atendida'];
-        $estadoMesa = $parametros['estadoMesa'] ?? 'abierta';
 
-        $mesa = new Mesa($IdSector, $capacidad, $atendida, $estadoMesa);
+        $mesa = new Mesa();
+        $mesa->IdSector = $IdSector;
+        $mesa->capacidad = $capacidad;
         $mesa->crearMesa();
 
         $payload = json_encode(array("mensaje" => "Mesa creada con éxito"));
 
         $response->getBody()->write($payload);
-        return $response
-            ->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public function ModificarUno($request, $response, $args)
+    {
+        $parametros = $request->getParsedBody();
+
+        $id = $parametros['id'];
+        $IdSector = $parametros['IdSector'] ?? null;
+        $capacidad = $parametros['capacidad'] ?? null;
+        $atendida = $parametros['atendida'] ?? null;
+        $estadoMesa = $parametros['estadoMesa'] ?? null;
+
+        // Llama a modificarMesa con los argumentos esperados por su definición
+        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida, $estadoMesa);
+
+        $payload = json_encode(array("mensaje" => "Mesa modificada con éxito"));
+
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+    }
     public function TraerUno($request, $response, $args)
     {
         $id = $args['id'];
@@ -44,25 +61,7 @@ class MesaController extends Mesa implements IApiUsable
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function ModificarUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
-
-        $id = $parametros['id'];
-        $IdSector = $parametros['IdSector'] ?? null;
-        $capacidad = $parametros['capacidad'] ?? null;
-        $atendida = $parametros['atendida'] ?? null;
-        $estadoMesa = $parametros['estadoMesa'] ?? null;
-
-        Mesa::modificarMesa($id, $IdSector, $capacidad, $atendida, $estadoMesa);
-
-        $payload = json_encode(array("mensaje" => "Mesa modificada con éxito"));
-
-        $response->getBody()->write($payload);
-        return $response
-            ->withHeader('Content-Type', 'application/json');
-    }
-
+   
     public function BorrarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
@@ -89,15 +88,32 @@ class MesaController extends Mesa implements IApiUsable
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function AbriMesa($request, $response, $args)
+    public function EstadoMesa($request, $response, $args)
     {
-        $id = $args['id'];
-        Mesa::abrirMesa($id);
+        $parametros = $request->getParsedBody();
+        $id = $parametros['id'];
+        $estadoMesa = $parametros["estadoMesa"];
+        Mesa::CambiarEstado($id, $estadoMesa);
 
-        $payload = json_encode(array("mensaje" => "Mesa abierta con éxito"));
+        $payload = json_encode(array("mensaje" => "Accion realizada con éxito"));
 
         $response->getBody()->write($payload);
         return $response
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function MesaMasSolicitada($request, $response, $args)
+    {
+        $mesaMasSolicitada = Mesa::obtenerMesaMasSolicitada();
+
+        if ($mesaMasSolicitada) {
+            $payload = json_encode($mesaMasSolicitada);
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } else {
+            $payload = json_encode(array("mensaje" => "No se encontró ninguna mesa solicitada."));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
     }
 }

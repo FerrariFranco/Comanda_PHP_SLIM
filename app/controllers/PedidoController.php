@@ -28,21 +28,19 @@ class PedidoController extends Pedido implements IApiUsable
         $parametros = $request->getParsedBody();
         $idUsuario = $parametros['idUsuario'];
         $idMesa = $parametros['idMesa'];
-        $precioTotal = $parametros['precioTotal'];
+        //$precioTotal = $parametros['precioTotal'];
         //$cobrado = $parametros['cobrado'];
         //$momentoCobrado = $parametros['momentoCobrado'];
-
-        // Crear el pedido
         $pedido = new Pedido();
         $pedido->idUsuario = $idUsuario;
         $pedido->idMesa = $idMesa;
-        $pedido->precioTotal = $precioTotal;
-        $pedido->cobrado = false;
-        $pedido->momentoCobrado = 0;
+        //$pedido->precioTotal = $precioTotal;
+        //$pedido->cobrado = false;
+        //$pedido->momentoCobrado = 0;
         $pedido->crearPedido();
 
         $payload = json_encode(array("mensaje" => "Pedido creado con éxito"));
-
+        Mesa::solicitarMesa($idMesa);
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -82,16 +80,7 @@ class PedidoController extends Pedido implements IApiUsable
         $parametros = $request->getParsedBody();
         $idPedido = $parametros['idPedido'];
         $idProducto = $parametros['idProducto'];
-        $tiempoDePreparacion = $parametros['tiempoDePreparacion'];
-
-        // Crear un nuevo pedido producto
-        $pedidoProducto = new PedidoProducto();
-        $pedidoProducto->idPedido = $idPedido;
-        $pedidoProducto->idProducto = $idProducto;
-        $pedidoProducto->tiempoDePreparacion = $tiempoDePreparacion;
-        $pedidoProducto->momentoEntregado = null;
-        $pedidoProducto->crearPedidoProducto();
-
+        PedidoProducto::agregarProductoAPedido($idPedido, $idProducto);
         $payload = json_encode(array("mensaje" => "Producto agregado al pedido con éxito"));
 
         $response->getBody()->write($payload);
@@ -123,4 +112,74 @@ class PedidoController extends Pedido implements IApiUsable
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
     }
+
+
+    public function guardarLaImagen($request, $response, $args)
+{
+    
+    $parametros = $request->getParsedBody();
+    $idPedido = $parametros['idPedido'];
+    $uploadedFiles = $request->getUploadedFiles();
+
+
+    if (isset($uploadedFiles['imagen'])) {
+        $imagen = $_FILES['imagen'];
+
+        if (isset($imagen)) {
+            try {
+                Pedido::GuardarImagen($idPedido, $imagen);
+                $payload = json_encode(array("mensaje" => "Imagen guardada correctamente"));
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            } catch (Exception $e) {
+                $payload = json_encode(array("error" => $e->getMessage()));
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+            }
+        } else {
+            $payload = json_encode(array("error" => "Error al subir la imagen"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    } else {
+        $payload = json_encode(array("error" => "No se encontró ninguna imagen para subir"));
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+    }
+}
+
+public function cobrarPedido($request, $response, $args)
+    {
+        $idPedido = $args['id'];
+
+        try {
+            $resultado = Pedido::cobrar($idPedido);
+            if ($resultado) {
+                $payload = json_encode(array("mensaje" => "Pedido cobrado exitosamente. Gracias por comer en EL GORDO RESTORAN, puede dejarnos una review con la funcion encuesta!"));
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            } else {
+                $payload = json_encode(array("error" => "Error al cobrar el pedido. Pedido no encontrado."));
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+            }
+        } catch (Exception $e) {
+            $payload = json_encode(array("error" => $e->getMessage()));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+}
+public function ProductosConTiempo($request, $response, $args)
+{
+    $idPedido = $args['id'];
+    $productosConTiempo = Pedido::obtenerProductosConTiempo($idPedido);
+
+    if ($productosConTiempo) {
+        $response->getBody()->write(json_encode($productosConTiempo));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    } else {
+        $response->getBody()->write(json_encode(['error' => 'No se encontraron productos para el pedido.']));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+    }
+}
 }

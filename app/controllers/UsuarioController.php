@@ -12,6 +12,7 @@ class UsuarioController extends Usuario implements IApiUsable
     {
         $parametros = (array)$request->getParsedBody();
         $usuario = $parametros['usuario'];
+        
         $clave = $parametros['clave'];
         $sector = $parametros['sector']; 
         $rol = $parametros['rol']; 
@@ -54,10 +55,12 @@ class UsuarioController extends Usuario implements IApiUsable
     
     public function ModificarUno($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
+        $parametros = (array)$request->getParsedBody();
 
-        $id = $parametros['id'];
+        $id = $parametros['id'] ?? null;
         $usuario = $parametros['usuario'] ?? null;
+        echo $id;
+        echo "asd";
         $clave = $parametros['clave'] ?? null;
         $rol = $parametros['rol'] ?? null;
         $sector = $parametros['sector'] ?? null;
@@ -82,33 +85,33 @@ class UsuarioController extends Usuario implements IApiUsable
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function generarToken(Request $request, Response $response): Response
-    {
-        $params = (array)$request->getParsedBody();
-        $usuario = $params['usuario'] ?? '';
-        $clave = $params['clave'] ?? '';
+    // public function generarToken(Request $request, Response $response): Response
+    // {
+    //     $params = (array)$request->getParsedBody();
+    //     $usuario = $params['usuario'] ?? '';
+    //     $clave = $params['clave'] ?? '';
 
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT rol FROM usuarios WHERE usuario = :usuario AND clave = :clave");
-        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
-        $consulta->bindValue(':clave', $clave, PDO::PARAM_STR);
-        $consulta->execute();
-        $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
+    //     $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    //     $consulta = $objAccesoDatos->prepararConsulta("SELECT rol FROM usuarios WHERE usuario = :usuario AND clave = :clave");
+    //     $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
+    //     $consulta->bindValue(':clave', $clave, PDO::PARAM_STR);
+    //     $consulta->execute();
+    //     $resultado = $consulta->fetch(PDO::FETCH_ASSOC);
 
-        if ($resultado) {
-            $rol = $resultado['rol'];
-            $datos = ['usuario' => $usuario, 'rol' => $rol];
-            $token = AutentificadorJWT::CrearToken($datos);
-            $payload = json_encode(['token' => $token]);
-            $response->getBody()->write($payload);
-            return $response->withHeader('Content-Type', 'application/json');
-        } else {
-            $response->getBody()->write(json_encode(['mensaje' => 'Credenciales inválidas']));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-        }
+    //     if ($resultado) {
+    //         $rol = $resultado['rol'];
+    //         $datos = ['usuario' => $usuario, 'rol' => $rol];
+    //         $token = AutentificadorJWT::CrearToken($datos);
+    //         $payload = json_encode(['token' => $token]);
+    //         $response->getBody()->write($payload);
+    //         return $response->withHeader('Content-Type', 'application/json');
+    //     } else {
+    //         $response->getBody()->write(json_encode(['mensaje' => 'Credenciales inválidas']));
+    //         return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+    //     }
 
         
-    }
+    // }
     public function ObtenerPedidosPorUsuario(Request $request, Response $response, $args): Response
     {
         $idUsuario = $args['id'];

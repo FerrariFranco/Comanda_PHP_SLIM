@@ -8,6 +8,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Psr7\Response as SlimResponse;
 use AutentificadorJWT;
 use Exception;
+require_once "./utils/AutentificadorJWT.php";
+
 
 class AdminMiddleware
 {
@@ -19,10 +21,10 @@ class AdminMiddleware
         try {
             $datosToken = AutentificadorJWT::ObtenerData($token);
 
-            if ($datosToken->rol !== 'socio') {
+            if ($datosToken->rol != 1) {
                 $response = new SlimResponse();
                 $response->getBody()->write(json_encode([
-                    'mensaje' => 'Acceso denegado. Solo los mozos pueden acceder a este recurso.'
+                    'mensaje' => 'Acceso denegado. Solo los empleados de Admin pueden acceder a este recurso.'
                 ]));
                 return $response->withHeader('Content-Type', 'application/json')
                                 ->withStatus(403);
@@ -30,6 +32,7 @@ class AdminMiddleware
 
             return $handler->handle($request);
         } catch (Exception $e) {
+            echo $e;
             $response = new SlimResponse();
             $payload = json_encode(array('mensaje' => 'ERROR: Hubo un error con el TOKEN'));
             $response->getBody()->write($payload);

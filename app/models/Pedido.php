@@ -12,17 +12,16 @@ class Pedido
     public $productos;
     public $momentoPedido;
 
+    public $RutaImagen;
+
     public function crearPedido()
     {
         $this->momentoPedido = date('Y-m-d H:i:s');
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (idUsuario, idMesa, precioTotal, cobrado, momentoCobrado) VALUES (:idUsuario, :idMesa, :precioTotal, :cobrado, :momentoCobrado)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO pedidos (idUsuario, idMesa, momentoPedido) VALUES (:idUsuario, :idMesa, :momentoPedido)");
         $consulta->bindValue(':idUsuario', $this->idUsuario, PDO::PARAM_INT);
         $consulta->bindValue(':idMesa', $this->idMesa, PDO::PARAM_INT);
-        $consulta->bindValue(':precioTotal', $this->precioTotal, PDO::PARAM_STR);
-        $consulta->bindValue(':cobrado', $this->cobrado, PDO::PARAM_BOOL);
-        $consulta->bindValue(':momentoCobrado', $this->momentoCobrado, PDO::PARAM_STR);
-        $consulta->bindValue(':momentoPedido', $this->momentoPedido, PDO::PARAM_STR);
+        $consulta->bindValue(':momentoPedido', $this->momentoPedido, PDO::PARAM_INT);
 
         $consulta->execute();
 
@@ -32,7 +31,7 @@ class Pedido
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, idUsuario, idMesa, precioTotal, cobrado, momentoCobrado FROM pedidos");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, idUsuario, idMesa, precioTotal, cobrado, momentoCobrado, momentoPedido, RutaImagen FROM pedidos");
         $consulta->execute();
 
         $pedidos = $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
@@ -71,8 +70,8 @@ class Pedido
 
     public static function borrarPedido($id)
     {
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("DELETE FROM pedidos WHERE id = :id");
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta("UPDATE pedidos SET eliminado = 1 WHERE id = :id");
         $consulta->bindValue(':id', $id, PDO::PARAM_INT);
         $consulta->execute();
     }
@@ -105,22 +104,10 @@ class Pedido
 
         return $pedidos;
     }
-
-    private function calcularPrecioTotal()
-    {
-        $productos = PedidoProducto::obtenerProductosPorPedido($this->id);
-        $this->precioTotal = 0;
-
-        foreach ($productos as $productoPedido) {
-            $producto = Producto::obtenerProducto($productoPedido->idProducto);
-            if ($producto) {
-                $this->precioTotal += $producto->precio;
-            }
-        }
-    }
+    
 
     public static function actualizarPrecioTotal($idPedido, $precioProducto)
-    {
+    {echo "entre";
         $pedido = self::obtenerPedido($idPedido);
         $nuevoPrecioTotal = $pedido->precioTotal + $precioProducto;
 
@@ -153,5 +140,67 @@ class Pedido
 
         return $estadoPedido;
     }
+
+    public static function GuardarImagen($idPedido, $imagen)
+{
+    $targetDir = "./Fotos/2024/";
+    
+    $targetFilePath = $targetDir . "_". $idPedido . ".jpg";
+    echo $targetFilePath;
+    echo $imagen["tmp_name"];
+
+    
+        if (move_uploaded_file($imagen["tmp_name"], $targetFilePath)) {
+            $rutaImagen = $targetFilePath;
+
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta("UPDATE pedidos SET RutaImagen = :RutaImagen WHERE id = :idPedido");
+            $consulta->bindValue(':RutaImagen', $rutaImagen, PDO::PARAM_STR);
+            $consulta->bindValue(':idPedido', $idPedido, PDO::PARAM_INT);
+            $consulta->execute();
+
+            return true;
+        }
+    }
+
+    public static function cobrar($idPedido)
+{
+    $pedido = self::obtenerPedido($idPedido);
+    if (!$pedido) {
+        return false; 
+    }
+
+
+
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDatos->prepararConsulta("UPDATE pedidos SET cobrado = 1, momentoCobrado = :momentoCobrado WHERE id = :idPedido");
+    $consulta->bindValue(':momentoCobrado', date('Y-m-d H:i:s'), PDO::PARAM_STR);
+    $consulta->bindValue(':idPedido', $idPedido, PDO::PARAM_INT);
+    $consulta->execute();
+
+    $consultaProductos = $objAccesoDatos->prepararConsulta("UPDATE pedido_productos SET estado = 'COBRADO' WHERE idPedido = :idPedido");
+    $consultaProductos->bindValue(':idPedido', $idPedido, PDO::PARAM_INT);
+    $consultaProductos->execute();
+
+    $consultaMesa = $objAccesoDatos->prepararConsulta("UPDATE mesas SET estadoMesa = 'DISPONIBLE' WHERE id = :idMesa");
+    $consultaMesa->bindValue(':idMesa', $pedido->idMesa, PDO::PARAM_INT);
+    $consultaMesa->execute();
+
+    return true;
 }
+public static function obtenerProductosConTiempo($idPedido)
+{
+    $objAccesoDatos = AccesoDatos::obtenerInstancia();
+    $consulta = $objAccesoDatos->prepararConsulta("
+        SELECT nombreProducto, tiempoDePreparacion 
+        FROM pedido_productos 
+        WHERE idPedido = :idPedido
+    ");
+    $consulta->bindValue(':idPedido', $idPedido, PDO::PARAM_INT);
+    $consulta->execute();
+
+    return $consulta->fetchAll(PDO::FETCH_ASSOC);
+}
+}
+
 

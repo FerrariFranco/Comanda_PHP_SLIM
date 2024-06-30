@@ -10,7 +10,6 @@ class RolController extends Rol implements IApiUsable
 
         $rol = $parametros['rol'];
 
-        // Creamos el rol
         $rol = new Rol($rol);
         $rol->crearRol();
 
@@ -23,7 +22,6 @@ class RolController extends Rol implements IApiUsable
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos rol por ID
         $id = $args['id'];
         $rol = Rol::obtenerRol($id);
         $payload = json_encode($rol);

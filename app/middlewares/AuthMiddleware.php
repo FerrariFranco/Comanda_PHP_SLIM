@@ -38,6 +38,7 @@ class AuthMiddleware
             AutentificadorJWT::VerificarToken($token);
             $response = $handler->handle($request);
         } catch (Exception $e) {
+            
             $response = new Response();
             $payload = json_encode(array('mensaje' => 'ERROR: Hubo un error con el TOKEN'));
             $response->getBody()->write($payload);
