@@ -138,7 +138,7 @@ $app->group('/encuestas', function (RouteCollectorProxy $group) {
 
 
 $app->post('/login', AuthController::class . ':login')->add(new TokenVencimientoMiddleware());
-$app->get('/csv', CSVController::class . ':exportCSV')->add(new AdminMiddleware())->add(new AuthMiddleware());
+$app->get('/csv', CSVController::class . ':exportPedidosTable');
 
 $app->post('/pedido/imagen', PedidoController::class . ':guardarLaImagen')->add(new VerificarImagenMiddleware())->add(new MozoMiddleware())->add(new AuthMiddleware());
 

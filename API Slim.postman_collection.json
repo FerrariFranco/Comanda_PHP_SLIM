@@ -1,0 +1,1420 @@
+{
+	"info": {
+		"_postman_id": "fe82d572-be8a-43c7-a214-1ec0b4df656c",
+		"name": "API Slim",
+		"description": "Colección de endpoints para la API desarrollada en Slim",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "34148999"
+	},
+	"item": [
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Cargar Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nombre",
+									"value": "Cocinero",
+									"type": "text"
+								},
+								{
+									"key": "apellido",
+									"value": "El Aceite",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "soychef@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "rol",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "sector",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "usuario",
+									"value": "cocinero",
+									"type": "text"
+								},
+								{
+									"key": "clave",
+									"value": "cocinero",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/usuarios/cargar"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/usuarios/franco"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Usuarios",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk1OTEyMTUsImV4cCI6MTcxOTY1MTIxNSwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjIsInVzdWFyaW8iOiJrYXNzYWRpbjIiLCJyb2wiOjJ9LCJhcHAiOiJDb21hbmRhIn0.u7ZsrTX4bNm3uC9EIMuzM43T9QJ2Kxvnt_98iGSwuTc"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/usuarios/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "nombre",
+									"value": "franco",
+									"type": "text"
+								},
+								{
+									"key": "apellido",
+									"value": "ferrari",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "francoferrari226@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "usuario",
+									"value": "franco",
+									"type": "text"
+								},
+								{
+									"key": "clave",
+									"value": "kassadin123",
+									"type": "text"
+								},
+								{
+									"key": "rol",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "sector",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/usuarios/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:666/usuarios/{2}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos",
+			"item": [
+				{
+					"name": "Cargar Pedido",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3NzcwNDQsImV4cCI6MTcxOTgzNzA0NCwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjQsInVzdWFyaW8iOiJtb3phIiwicm9sIjozLCJzZWN0b3IiOjJ9LCJhcHAiOiJDb21hbmRhIn0._Pb3_TkwGXF_GVk4yAV_KgdHXa45_RyJaYysV5T3WdE"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idUsuario",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "idMesa",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "precioTotal",
+									"value": "1000",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "cobrado",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "momentoCobrado",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/pedidos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"pedidos",
+								""
+							],
+							"query": [
+								{
+									"key": "id_usuario",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "id_mesa",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar Producto al Pedido",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idPedido",
+									"type": "text"
+								},
+								{
+									"key": "idProducto",
+									"type": "text"
+								},
+								{
+									"key": "tiempoDePreparacion",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/pedidos/agregarProducto",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"pedidos",
+								"agregarProducto"
+							],
+							"query": [
+								{
+									"key": "id_pedido",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "id_produdcto",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "tiempo_preparacion",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Entregar Pedido",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:666/pedidos/entregar/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/8"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Pedidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Pedido",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"type": "text"
+								},
+								{
+									"key": "idUsuario",
+									"type": "text"
+								},
+								{
+									"key": "idMesa",
+									"type": "text"
+								},
+								{
+									"key": "precioTotal",
+									"type": "text"
+								},
+								{
+									"key": "cobrado",
+									"type": "text"
+								},
+								{
+									"key": "momentoCobrado",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/pedidos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Pedido",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:666/pedidos/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "fotito",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": "postman-cloud:///1ef163d2-5a2f-4f30-b667-4cafe67326b0"
+								},
+								{
+									"key": "idPedido",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/pedido/imagen"
+					},
+					"response": []
+				},
+				{
+					"name": "COBRAR",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/cobrar/4"
+					},
+					"response": []
+				},
+				{
+					"name": "pedidos cocina",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/cocina/1"
+					},
+					"response": []
+				},
+				{
+					"name": "pedidos candy bar",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/candybar/4"
+					},
+					"response": []
+				},
+				{
+					"name": "pedidos cocina Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedidos/barra/3"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mesas",
+			"item": [
+				{
+					"name": "Cargar Mesa",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3Nzc0OTEsImV4cCI6MTcxOTgzNzQ5MSwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjUsInVzdWFyaW8iOiJzb2NpbyIsInJvbCI6MSwic2VjdG9yIjo0fSwiYXBwIjoiQ29tYW5kYSJ9.QeNFxhQjiMH07FdFNLHYnfQDEn6LrpbXfs3suV3EmPQ"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idSector",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "capacidad",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/mesas/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"mesas",
+								""
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Mesa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/mesas/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todas las Mesas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3Nzc0OTEsImV4cCI6MTcxOTgzNzQ5MSwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjUsInVzdWFyaW8iOiJzb2NpbyIsInJvbCI6MSwic2VjdG9yIjo0fSwiYXBwIjoiQ29tYW5kYSJ9.QeNFxhQjiMH07FdFNLHYnfQDEn6LrpbXfs3suV3EmPQ"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/mesas/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Mesa",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"type": "text"
+								},
+								{
+									"key": "codigo",
+									"type": "text"
+								},
+								{
+									"key": "estado",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/mesas/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Mesa",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:666/mesas/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Cargar Producto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3NzcwNDQsImV4cCI6MTcxOTgzNzA0NCwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjQsInVzdWFyaW8iOiJtb3phIiwicm9sIjozLCJzZWN0b3IiOjJ9LCJhcHAiOiJDb21hbmRhIn0._Pb3_TkwGXF_GVk4yAV_KgdHXa45_RyJaYysV5T3WdE"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nombre",
+									"value": "perro caliente",
+									"type": "text"
+								},
+								{
+									"key": "precio",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "tipo",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/productos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"productos",
+								""
+							],
+							"query": [
+								{
+									"key": "Nombre",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Producto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/productos/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"productos",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Productos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/productos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Producto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "nombre",
+									"value": "perrito caliente",
+									"type": "text"
+								},
+								{
+									"key": "precio",
+									"value": "12222",
+									"type": "text"
+								},
+								{
+									"key": "idTipo",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/productos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Producto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/productos/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"productos",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tipos",
+			"item": [
+				{
+					"name": "Cargar Tipo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3Nzc0OTEsImV4cCI6MTcxOTgzNzQ5MSwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjUsInVzdWFyaW8iOiJzb2NpbyIsInJvbCI6MSwic2VjdG9yIjo0fSwiYXBwIjoiQ29tYW5kYSJ9.QeNFxhQjiMH07FdFNLHYnfQDEn6LrpbXfs3suV3EmPQ"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nombre",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "IdSector",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/tipos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Tipo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/tipos/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"tipos",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Tipos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3Nzc0OTEsImV4cCI6MTcxOTgzNzQ5MSwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjUsInVzdWFyaW8iOiJzb2NpbyIsInJvbCI6MSwic2VjdG9yIjo0fSwiYXBwIjoiQ29tYW5kYSJ9.QeNFxhQjiMH07FdFNLHYnfQDEn6LrpbXfs3suV3EmPQ"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/tipos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Tipo",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"type": "text"
+								},
+								{
+									"key": "nombre",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/tipos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Tipo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:666/tipos/5"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sectores",
+			"item": [
+				{
+					"name": "Cargar Sector",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nombre",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/sectores/"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Sector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/sectores/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"sectores",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Sectores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/sectores/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Sector",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"type": "text"
+								},
+								{
+									"key": "nombre",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/sectores/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Sector",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/sectores/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"sectores",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedido_Productos",
+			"item": [
+				{
+					"name": "Cargar PedidoProducto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3NzcwNDQsImV4cCI6MTcxOTgzNzA0NCwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjQsInVzdWFyaW8iOiJtb3phIiwicm9sIjozLCJzZWN0b3IiOjJ9LCJhcHAiOiJDb21hbmRhIn0._Pb3_TkwGXF_GVk4yAV_KgdHXa45_RyJaYysV5T3WdE"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idPedido",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "idProducto",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "tiempoDePreparacion",
+									"value": "12",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "momentoEntregado",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": "http://localhost:666/pedido_productos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer PedidoProducto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedido_productos/1"
+					},
+					"response": []
+				},
+				{
+					"name": "SERVIR",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedido_productos/servir/2"
+					},
+					"response": []
+				},
+				{
+					"name": "PREPARAR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTk3NzcxNzAsImV4cCI6MTcxOTgzNzE3MCwiYXVkIjoiNTIyNjY2Njk5OWYyYWRiNTEyNGM1ODdkYjk1NTdiNzZjMDRlNDhkZiIsImRhdGEiOnsiaWQiOjYsInVzdWFyaW8iOiJjb2NpbmVybyIsInJvbCI6Miwic2VjdG9yIjoxfSwiYXBwIjoiQ29tYW5kYSJ9.jzE0oZAaUtiGrZRTrFb6i0kNyjW1KFTXu8aS9c5KWVg"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "tiempoDePreparacion",
+									"value": "15",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/pedido_productos/preparar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"pedido_productos",
+								"preparar"
+							],
+							"query": [
+								{
+									"key": "tiempoDePreparacion",
+									"value": "12",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los PedidoProductos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/pedido_productos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar PedidoProducto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "idPedido",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "idProducto",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "tiempoDePreparacion",
+									"value": "21",
+									"type": "text"
+								},
+								{
+									"key": "momentoEntregado",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/pedido_productos/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar PedidoProducto",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:666/pedido_productos/0"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Cargar Rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Nombre",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": "http://localhost:666/roles/"
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Rol",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/roles/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"roles",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Traer Todos los Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/roles/"
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"type": "text"
+								},
+								{
+									"key": "nombre",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/roles/"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrar Rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:666/roles/{id}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"roles",
+								"{id}"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CSV",
+			"item": [
+				{
+					"name": "SubirDatos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/csv"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Loigging",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "usuario",
+									"value": "socio",
+									"type": "text"
+								},
+								{
+									"key": "clave",
+									"value": "socio",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:666/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "666",
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Encuestas",
+			"item": [
+				{
+					"name": "Subir Encuesta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "idMesa",
+									"value": "29",
+									"type": "text"
+								},
+								{
+									"key": "idPedido",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "puntuacion",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "comentario",
+									"value": "no me gusto",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:666/encuestas/"
+					},
+					"response": []
+				},
+				{
+					"name": "Mejores encuestas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/encuestas/mejores"
+					},
+					"response": []
+				},
+				{
+					"name": "PDF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:666/encuestas/pdf"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

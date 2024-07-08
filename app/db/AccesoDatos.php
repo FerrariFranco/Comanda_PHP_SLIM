@@ -38,41 +38,44 @@ class AccesoDatos
         trigger_error('ERROR: La clonación de este objeto no está permitida', E_USER_ERROR);
     }
 
-    public function exportAllTablesToCSV($directory)
-    {
-        $tables = $this->getAllTables();
+    // public function exportAllTablesToCSV($directory)
+    // {
+    //     $tables = $this->getAllTables();
 
-        if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
-        }
+    //     if (!is_dir($directory)) {
+    //         mkdir($directory, 0777, true);
+    //     }
 
-        foreach ($tables as $table) {
-            $this->exportTableToCSV($table, $directory);
-        }
-    }
+    //     foreach ($tables as $table) {
+    //         $this->exportTableToCSV($table, $directory);
+    //     }
+    // }
 
-    private function getAllTables()
+    public function getAllTables()
     {
         $stmt = $this->objetoPDO->query("SHOW TABLES");
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    private function exportTableToCSV($table, $directory)
+    public function exportTableToCSV($table)
     {
         $stmt = $this->objetoPDO->query("SELECT * FROM $table");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!empty($rows)) {
-            $filename = $directory . DIRECTORY_SEPARATOR . $table . '.csv';
-            $file = fopen($filename, 'w');
+            $output = fopen('php://output', 'w');
+            ob_start();
 
-            fputcsv($file, array_keys($rows[0]));
+            fputcsv($output, array_keys($rows[0]));
 
             foreach ($rows as $row) {
-                fputcsv($file, $row);
+                fputcsv($output, $row);
             }
 
-            fclose($file);
+            fclose($output);
+            return ob_get_clean();
         }
+
+        return '';
     }
 }

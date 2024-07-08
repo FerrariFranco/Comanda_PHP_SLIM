@@ -12,14 +12,14 @@ class AutentificadorJWT
         $ahora = time();
         $payload = array(
             'iat' => $ahora,
-            'exp' => $ahora + (60000),
+            'exp' => $ahora + (600000000),
             'aud' => self::Aud(),
             'data' => $datos,
             'app' => "Comanda"
         );
         $token = JWT::encode($payload, self::$claveSecreta);
         
-        self::GuardarTokenEnDB($datos['usuario'], $datos['rol'], $token, $ahora, $ahora + (60000));
+        self::GuardarTokenEnDB($datos['usuario'], $datos['rol'], $token, $ahora, $ahora + (600000000));
 
         return $token;
     }
